@@ -28,6 +28,6 @@ import { UserSubscriber } from '@user/user.subscribe';
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {
-    new UserSubscriber(this.dataSource); // ⬅️ This activates the subscriber!
+    new UserSubscriber(this.dataSource);
   }
 }
