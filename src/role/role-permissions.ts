@@ -23,6 +23,7 @@ export const RolePermissions = {
     Permission.ViewProfile,
     Permission.UploadPayroll,
     Permission.ViewPayrolls,
+    Permission.UpdateProfile,
     Permission.ViewUsers,
   ],
   [Role.Employee]: [

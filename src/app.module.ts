@@ -10,10 +10,15 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
 import { UserSubscriber } from '@user/user.subscribe';
+import databaseConfig from '@common/config/database.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({}),
+    ConfigModule.forRoot({
+      isGlobal: true, // Essential for global access
+      load: [databaseConfig], // Explicitly load your config
+      envFilePath: '.env',
+    }),
     UserModule,
     AuthModule,
     RoleModule,

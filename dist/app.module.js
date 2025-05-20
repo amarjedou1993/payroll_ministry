@@ -22,6 +22,7 @@ const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
 const typeorm_1 = require("typeorm");
 const user_subscribe_1 = require("./user/user.subscribe");
+const database_config_1 = require("./common/config/database.config");
 let AppModule = class AppModule {
     constructor(dataSource) {
         this.dataSource = dataSource;
@@ -32,7 +33,11 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot({}),
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+                load: [database_config_1.default],
+                envFilePath: '.env',
+            }),
             user_module_1.UserModule,
             auth_module_1.AuthModule,
             role_module_1.RoleModule,

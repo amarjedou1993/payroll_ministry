@@ -25,6 +25,7 @@ exports.RolePermissions = {
         permission_enum_1.Permission.ViewProfile,
         permission_enum_1.Permission.UploadPayroll,
         permission_enum_1.Permission.ViewPayrolls,
+        permission_enum_1.Permission.UpdateProfile,
         permission_enum_1.Permission.ViewUsers,
     ],
     [role_enum_1.Role.Employee]: [
