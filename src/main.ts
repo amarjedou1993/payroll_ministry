@@ -17,7 +17,12 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-    origin: 'http://localhost:5173',
+    // origin: [
+    //   'http://185.98.137.109:5173', // Keep for now (local test)
+    //   'https://khlassyculture.com', // Your real frontend domain (important!)
+    // ],
+    origin: 'https://khlassyculture.com', // Your real frontend domain (important!)
+
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
