@@ -21,7 +21,8 @@ async function bootstrap() {
     //   'http://185.98.137.109:5173', // Keep for now (local test)
     //   'https://khlassyculture.com', // Your real frontend domain (important!)
     // ],
-    origin: 'https://khlassyculture.com', // Your real frontend domain (important!)
+    // origin: 'https://khlassyculture.com', // Your real frontend domain (important!)
+    origin: ['https://khlassyculture.com', 'https://www.khlassyculture.com'],
 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
