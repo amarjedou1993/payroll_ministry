@@ -217,6 +217,178 @@ export class UserService {
     return user.payrolls;
   }
 
+  // // Helper method to parse Excel file
+  // private parseExcelFile(fileBuffer: Buffer): {
+  //   matricule: string;
+  //   prenom: string;
+  //   nom: string;
+  //   position: string;
+  //   role: string;
+  // }[] {
+  //   const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
+  //   const sheetName = workbook.SheetNames[0];
+  //   const sheet = workbook.Sheets[sheetName];
+
+  //   console.log('Raw sheet data:', XLSX.utils.sheet_to_json(sheet)); // Log raw data without header mapping
+  //   const data = XLSX.utils.sheet_to_json(sheet, {
+  //     header: ['matricule', 'prenom', 'nom', 'position', 'role'],
+  //     range: 1,
+  //   });
+
+  //   return data.map((row: any) => ({
+  //     matricule: row.matricule,
+  //     prenom: row.prenom,
+  //     nom: row.nom,
+  //     position: row.position,
+  //     role: row.role || 'Employee',
+  //   }));
+  // }
+
+  // async importUsersFromFile(
+  //   file: Express.Multer.File,
+  // ): Promise<{ savedUsers: UserResponseDto[]; skippedCount: number }> {
+  //   console.log('Starting importUsersFromFile');
+  //   const users = this.parseExcelFile(file.buffer);
+  //   console.log('Users from parseExcelFile:', users);
+
+  //   if (users.length === 0) {
+  //     throw new BadRequestException('No valid user data found in the file');
+  //   }
+
+  //   const newUsers = await Promise.all(
+  //     users.map(async (userData, index) => {
+  //       console.log(`Processing row ${index}:`, userData);
+  //       const matricule = String(userData.matricule || '').trim();
+  //       const prenom = String(userData.prenom || '').trim();
+  //       const nom = String(userData.nom || '').trim();
+  //       const position = String(userData.position || '').trim();
+  //       const role = String(userData.role || 'Employee').trim();
+
+  //       console.log(`Row ${index} after normalization:`, {
+  //         matricule,
+  //         prenom,
+  //         nom,
+  //         position,
+  //         role,
+  //       });
+
+  //       if (!matricule) {
+  //         console.warn(
+  //           `Skipping row ${index} with missing matricule: ${JSON.stringify(userData)}`,
+  //         );
+  //         return null;
+  //       }
+
+  //       // Check for existing employeeId
+  //       const existingUserByEmployeeId = await this.findByEmployeeId(matricule);
+  //       console.log(
+  //         `findByEmployeeId(${matricule}) result:`,
+  //         existingUserByEmployeeId,
+  //       );
+  //       if (existingUserByEmployeeId) {
+  //         console.warn(
+  //           `Row ${index}: User with employeeId ${matricule} already exists, skipping`,
+  //         );
+  //         return null;
+  //       }
+
+  //       // Generate initial username
+  //       let username = `${prenom}${nom}`.toLowerCase().replace(/\s+/g, '');
+  //       // Check for existing username in the database
+  //       const existingUserByUsername = await this.userRepository.findOne({
+  //         where: { username },
+  //       });
+  //       if (existingUserByUsername) {
+  //         console.warn(
+  //           `Row ${index}: Username '${username}' already exists in database, appending matricule`,
+  //         );
+  //         username = `${username}_${matricule}`; // Ensure uniqueness
+  //       }
+
+  //       const password =
+  //         `${prenom.charAt(0)}${nom.charAt(0)}@culture`.toLowerCase();
+  //       const hashedPassword = await hashPassword(password);
+
+  //       const assignedRoles = await this.roleService.getRolesByNames([role]);
+  //       if (!assignedRoles.length) {
+  //         console.warn(
+  //           `Row ${index}: Role '${role}' not found, defaulting to 'Employee'`,
+  //         );
+  //         const defaultRoles = await this.roleService.getRolesByNames([
+  //           'Employee',
+  //         ]);
+  //         if (!defaultRoles.length) {
+  //           throw new BadRequestException(`Default role 'Employee' not found`);
+  //         }
+  //         return this.userRepository.create({
+  //           employeeId: matricule,
+  //           username,
+  //           password: hashedPassword,
+  //           name: `${prenom} ${nom}`,
+  //           position,
+  //           roles: defaultRoles,
+  //         });
+  //       }
+
+  //       return this.userRepository.create({
+  //         employeeId: matricule,
+  //         username,
+  //         password: hashedPassword,
+  //         name: `${prenom} ${nom}`,
+  //         position,
+  //         roles: assignedRoles,
+  //       });
+  //     }),
+  //   );
+
+  //   const validUsers = newUsers.filter((user) => user !== null);
+  //   console.log('Valid users before deduplication:', validUsers);
+
+  //   // Deduplicate by both employeeId and username within the Excel file
+  //   const uniqueUsersMap = new Map<string, User>();
+  //   const usernameSet = new Set<string>();
+  //   validUsers.forEach((user) => {
+  //     if (
+  //       !uniqueUsersMap.has(user.employeeId) &&
+  //       !usernameSet.has(user.username)
+  //     ) {
+  //       uniqueUsersMap.set(user.employeeId, user);
+  //       usernameSet.add(user.username);
+  //     } else {
+  //       console.warn(
+  //         `Row skipped: Duplicate employeeId ${user.employeeId} or username ${user.username} in Excel file`,
+  //       );
+  //     }
+  //   });
+  //   const uniqueUsers = Array.from(uniqueUsersMap.values());
+  //   const skippedCount = users.length - uniqueUsers.length;
+  //   console.log('Unique users to save:', uniqueUsers);
+
+  //   if (uniqueUsers.length === 0) {
+  //     throw new BadRequestException('No new users to import after filtering');
+  //   }
+
+  //   // Save users individually to avoid atomic rollback
+  //   const savedUsers: UserResponseDto[] = [];
+  //   for (const user of uniqueUsers) {
+  //     try {
+  //       const savedUser = await this.userRepository.save(user);
+  //       savedUsers.push(savedUser);
+  //     } catch (error) {
+  //       if (error.code === '23505') {
+  //         console.warn(
+  //           `Skipping user ${user.employeeId}: Duplicate ${error.detail || 'key'} detected`,
+  //         );
+  //       } else {
+  //         console.error(`Error saving user ${user.employeeId}:`, error);
+  //       }
+  //     }
+  //   }
+
+  //   console.log('Saved users:', savedUsers);
+  //   return { savedUsers, skippedCount };
+  // }
+
   // Helper method to parse Excel file
   private parseExcelFile(fileBuffer: Buffer): {
     matricule: string;
@@ -292,8 +464,12 @@ export class UserService {
           return null;
         }
 
-        // Generate initial username
-        let username = `${prenom}${nom}`.toLowerCase().replace(/\s+/g, '');
+        // Generate username: Capitalize prenom and nom, separated by a space
+        const capitalizedPrenom =
+          prenom.charAt(0).toUpperCase() + prenom.slice(1).toLowerCase();
+        const capitalizedNom =
+          nom.charAt(0).toUpperCase() + nom.slice(1).toLowerCase();
+        let username = `${capitalizedPrenom} ${capitalizedNom}`;
         // Check for existing username in the database
         const existingUserByUsername = await this.userRepository.findOne({
           where: { username },
@@ -305,8 +481,8 @@ export class UserService {
           username = `${username}_${matricule}`; // Ensure uniqueness
         }
 
-        const password =
-          `${prenom.charAt(0)}${nom.charAt(0)}@culture`.toLowerCase();
+        // Password is matricule + "37"
+        const password = `${matricule}37`;
         const hashedPassword = await hashPassword(password);
 
         const assignedRoles = await this.roleService.getRolesByNames([role]);

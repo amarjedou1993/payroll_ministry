@@ -91,22 +91,6 @@ export class PdfService {
     }
   }
 
-  //   async processUploadedPayroll(filePath: string): Promise<void> {
-  //     try {
-  //       const employeePages = await this.splitAndProcessPdf(filePath);
-
-  //       for (const [employeeId, pages] of employeePages.entries()) {
-  //         const outputPath = `./payrolls/${employeeId}-${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.pdf`;
-  //         await this.createEmployeePdf(filePath, pages, outputPath);
-  //       }
-
-  //       unlinkSync(filePath);
-  //       this.logger.log('Payroll processing completed.');
-  //     } catch (error) {
-  //       this.logger.error('Payroll processing failed', error.stack);
-  //     }
-  //   }
-
   async getPdfBuffer(filePath: string): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       fs.readFile(filePath, (err, data) => {
